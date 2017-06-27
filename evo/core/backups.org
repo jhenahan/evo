@@ -1,0 +1,51 @@
+* Backups
+  There's a very compelling [[https://stackoverflow.com/a/20824625/794944][SO answer]] (and accompanying [[https://www.emacswiki.org/emacs/ForceBackups][ewiki page]])
+  which provides a really neat and quite robust backup strategy.
+
+  First, we set up versioned backups, which will keep 10 backups,
+  ought to be just about enough history for anyone. You can of course
+  tweak this if you find you need more.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq version-control t
+	  kept-new-versions 10
+	  kept-old-versions 0
+	  delete-old-versions t
+	  backup-by-copying t)
+  #+END_SRC
+  
+  Emacs evidently doesn't backup version-controlled files by default,
+  so let's fix that. If you've never accidentally wiped all your work
+  between commits, we must be in different universes.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq vc-make-backup-files t)
+  #+END_SRC
+
+  Finally, we'll set up a two-pronged backup strategy -- per-save, and
+  per-session. First, we want to set up a directory for per-save
+  backups.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq backup-directory-alist
+	  `(("" . ,(concat
+		    user-emacs-directory "/backup/per-save"))))
+  #+END_SRC
+
+  Then, we hook into the =before-save= to save a per-session backup
+  (analogous to Emacs' usual backup strategy), then force a per-save
+  backup by unsetting =buffer-backed-up=.
+
+  #+BEGIN_SRC emacs-lisp
+    (defun force-backup-of-buffer ()
+	(when (not buffer-backed-up)
+	  (let ((backup-directory-alist
+		 `(("" . ,(concat
+			   user-emacs-directory "/backup/per-session"))))
+		(kept-new-versions 3))
+	    (backup-buffer)))
+	(let ((buffer-backed-up nil))
+	  (backup-buffer)))
+
+    (add-hook 'before-save-hook  'force-backup-of-buffer)
+  #+END_SRC
