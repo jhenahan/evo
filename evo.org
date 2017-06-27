@@ -52,13 +52,4 @@
   First, I need to undo a series of exceptionally terrible defaults
   that Emacs insists upon, and set up basic ergonomy.
 
-  #+BEGIN_SRC emacs-lisp
-    (let ((default-directory 
-	    (concat
-	     user-emacs-directory
-	     (convert-standard-filename "evo/"))))
-	  (normal-top-level-add-to-load-path '("."))
-	  (normal-top-level-add-subdirs-to-load-path))
-  #+END_SRC
-
   #+INCLUDE: "~/.emacs.d/evo/core.org"

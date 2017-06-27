@@ -34,6 +34,8 @@
 	   nil
 	   (concat user-emacs-directory "lisp/evo.el")
 	   'emacs-lisp)))))
+    (with-temp-file "README.org"
+      (insert-file-contents tmp-file))
     (mapcar 'kill-buffer `("*Org ORG Export*" ,(file-name-nondirectory tmp-file)))))
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
