@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 #+EMAIL: jhenahan@me.com
 
-| *Author* | {{{author}}} {{{email}}}      |
+| *Author* | {{{author}}} <{{{email}}}>    |
 |----------+-------------------------------|
 | *Date*   | {{{time(%Y-%m-%d %H:%M:%S)}}} |
 

@@ -1,8 +1,8 @@
 #+TITLE: Emacs + eVil + Org (EVO)
 #+AUTHOR: Jack Henahan
-| *Author* | Jack Henahan jhenahan@me.com |
-|----------+------------------------------|
-| *Date*   | 2017-06-27 18:41:42          |
+| *Author* | Jack Henahan <jhenahan@me.com> |
+|----------+--------------------------------|
+| *Date*   | 2017-06-27 19:36:31            |
 
 #+NAME: Note
 #+BEGIN_SRC emacs-lisp
@@ -50,15 +50,6 @@ be a fairly straightforward =quelpa= and =use-package= affair.
 First, I need to undo a series of exceptionally terrible defaults
 that Emacs insists upon, and set up basic ergonomy.
 
-#+BEGIN_SRC emacs-lisp
-  (let ((default-directory 
-  	(concat
-  	 user-emacs-directory
-  	 (convert-standard-filename "evo/"))))
-        (normal-top-level-add-to-load-path '("."))
-        (normal-top-level-add-subdirs-to-load-path))
-#+END_SRC
-
 ** System Settings
 *** Backups
 There's a very compelling [[https://stackoverflow.com/a/20824625/794944][SO answer]] (and accompanying [[https://www.emacswiki.org/emacs/ForceBackups][ewiki page]])
@@ -90,8 +81,8 @@ backups.
 
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist
-        '(("" . (concat
-  	       user-emacs-directory "/backup/per-save"))))
+        `(("" . ,(concat
+  		user-emacs-directory "/backup/per-save"))))
 #+END_SRC
 
 Then, we hook into the =before-save= to save a per-session backup
@@ -102,8 +93,8 @@ backup by unsetting =buffer-backed-up=.
   (defun force-backup-of-buffer ()
       (when (not buffer-backed-up)
         (let ((backup-directory-alist
-  	     '(("" . (concat
-  		      user-emacs-directory "/backup/per-session"))))
+  	     `(("" . ,(concat
+  		       user-emacs-directory "/backup/per-session"))))
   	    (kept-new-versions 3))
   	(backup-buffer)))
       (let ((buffer-backed-up nil))
