@@ -30,7 +30,7 @@
 	   nil
 	   (concat user-emacs-directory "lisp/evo.el")
 	   'emacs-lisp)))))
-    (with-temp-file "README.org"
+    (with-temp-file (concat user-emacs-directory "README.org")
       (insert-file-contents tmp-file))
     (mapcar 'kill-buffer
 	    `("*Org ORG Export*"

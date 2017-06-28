@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-27 19:36:31            |
+| *Date*   | 2017-06-27 20:03:26            |
 
 #+NAME: Note
 #+BEGIN_SRC emacs-lisp
@@ -100,5 +100,5 @@ backup by unsetting =buffer-backed-up=.
       (let ((buffer-backed-up nil))
         (backup-buffer)))
   
-  (add-hook 'before-save-hook  'force-backup-of-buffer)
+  (add-hook 'before-save-hook 'force-backup-of-buffer)
 #+END_SRC
