@@ -2,7 +2,12 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-27 20:03:26            |
+| *Date*   | 2017-06-28 17:37:24            |
+
+This file is updated every time the init file is reloaded, so the
+entire configuration (aside from the bootstrapping code) should
+document itself here. If you don't often reload Emacs, you can update
+the documentation with =M-x reload-user-init-file=.
 
 #+NAME: Note
 #+BEGIN_SRC emacs-lisp
@@ -46,12 +51,32 @@ be a fairly straightforward =quelpa= and =use-package= affair.
   (require 'quelpa-use-package)   
 #+END_SRC
 
+
 * Core Configuration
 First, I need to undo a series of exceptionally terrible defaults
-that Emacs insists upon, and set up basic ergonomy.
+that Emacs insists upon, and set up basic ergonomy. We'll get some
+convenient modernisms set up, as well.
 
+** Modern Libs
+Some of the default Emacs Lisp APIs are a bit unintuitive, so we're
+going to use the more modern options to hopefully keep our sanity.
+*** Lists
+#+BEGIN_SRC emacs-lisp
+  (use-package dash :quelpa)
+#+END_SRC
+
+*** Strings
+#+BEGIN_SRC emacs-lisp
+  (use-package s :quelpa)
+#+END_SRC
+
+*** Files
+#+BEGIN_SRC emacs-lisp
+  (use-package f :quelpa)
+#+END_SRC
 ** System Settings
-*** Backups
+*** History
+**** Backups
 There's a very compelling [[https://stackoverflow.com/a/20824625/794944][SO answer]] (and accompanying [[https://www.emacswiki.org/emacs/ForceBackups][ewiki page]])
 which provides a really neat and quite robust backup strategy.
 
@@ -60,11 +85,13 @@ ought to be just about enough history for anyone. You can of course
 tweak this if you find you need more.
 
 #+BEGIN_SRC emacs-lisp
-  (setq version-control t
-        kept-new-versions 10
-        kept-old-versions 0
-        delete-old-versions t
-        backup-by-copying t)
+  (use-package files
+    :init
+    (setq version-control t
+  	kept-new-versions 10
+  	kept-old-versions 0
+  	delete-old-versions t
+  	backup-by-copying t))
 #+END_SRC
 
 Emacs evidently doesn't backup version-controlled files by default,
@@ -72,7 +99,9 @@ so let's fix that. If you've never accidentally wiped all your work
 between commits, we must be in different universes.
 
 #+BEGIN_SRC emacs-lisp
-  (setq vc-make-backup-files t)
+  (use-package vc-hooks
+    :init
+    (setq vc-make-backup-files t))
 #+END_SRC
 
 Finally, we'll set up a two-pronged backup strategy -- per-save, and
@@ -80,9 +109,13 @@ per-session. First, we want to set up a directory for per-save
 backups.
 
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist
-        `(("" . ,(concat
-  		user-emacs-directory "/backup/per-save"))))
+  (use-package files
+    :init
+    (progn
+      (setq backup-directory (f-join user-emacs-directory "backup"))
+      (setq backup-directory-alist
+  	  `(("" . ,(f-join
+  		    backup-directory "per-save"))))))
 #+END_SRC
 
 Then, we hook into the =before-save= to save a per-session backup
@@ -90,15 +123,136 @@ Then, we hook into the =before-save= to save a per-session backup
 backup by unsetting =buffer-backed-up=.
 
 #+BEGIN_SRC emacs-lisp
-  (defun force-backup-of-buffer ()
-      (when (not buffer-backed-up)
-        (let ((backup-directory-alist
-  	     `(("" . ,(concat
-  		       user-emacs-directory "/backup/per-session"))))
-  	    (kept-new-versions 3))
+  (use-package files
+    :init
+    (progn
+      (defun force-backup-of-buffer ()
+        (when (not buffer-backed-up)
+  	(let ((backup-directory-alist
+  	       `(("" . ,(f-join
+  			 backup-directory "per-session"))))
+  	      (kept-new-versions 3))
+  	  (backup-buffer)))
+        (let ((buffer-backed-up nil))
   	(backup-buffer)))
-      (let ((buffer-backed-up nil))
-        (backup-buffer)))
   
-  (add-hook 'before-save-hook 'force-backup-of-buffer)
+      (add-hook 'before-save-hook 'force-backup-of-buffer)))
+#+END_SRC
+
+**** Command History
+It's nice to be able to refer back to previous commands (and it's
+utterly necessary for extended commands in Evil).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package savehist
+    :after files
+    :init
+    (progn
+      (setq savehist-file (concat backup-directory "savehist")
+  	  enable-recursive-minibuffers t
+  	  history-length 1000
+  	  savehist-additional-variables '(mark-ring
+  					  global-mark-ring
+  					  search-ring
+  					  regexp-search-ring
+  					  extended-command-history)
+  	  savehist-autosave-interval 60)
+      (savehist-mode t)))
+#+END_SRC
+*** Basic UI
+**** UI Cleanup
+We're trying to get away from non-keyboard inputs, entirely, so
+toolbars and scroll bars have to go.
+
+#+BEGIN_SRC emacs-lisp
+  (when (functionp 'menu-bar-mode)
+    (menu-bar-mode -1))
+  (when (functionp 'set-scroll-bar-mode)
+    (set-scroll-bar-mode 'nil))
+  (when (functionp 'mouse-wheel-mode)
+    (mouse-wheel-mode -1))
+  (when (functionp 'tooltip-mode)
+    (tooltip-mode -1))
+  (when (functionp 'tool-bar-mode)
+    (tool-bar-mode -1))
+  (when (functionp 'blink-cursor-mode)
+    (blink-cursor-mode -1))
+  (setq inhibit-splash-screen t)
+#+END_SRC
+
+Also, beeps are annoying, so cut it out.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ring-bell-function (lambda ()))
+#+END_SRC
+
+**** Font Locking
+I have never *not* wanted syntax highlighting when it's available,
+so let's get that going. I don't particularly know the consequences
+of forcing font-locking to handle multiline patterns, so we'll see
+if that sticks around.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package font-core
+    :init
+    (global-font-lock-mode t))
+  (use-package font-lock
+    :init
+    (setq-default font-lock-multiline t))
+#+END_SRC
+*** Character Encodings
+UTF-8? UTF-8. And I mean it.
+
+#+BEGIN_SRC emacs-lisp
+  (set-charset-priority 'unicode)
+  (use-package mule
+    :init
+    (progn
+      (set-default-coding-systems 'utf-8)
+      (set-terminal-coding-system 'utf-8)
+      (set-keyboard-coding-system 'utf-8)
+      (set-selection-coding-system 'utf-8)
+      (prefer-coding-system 'utf-8)))
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+#+END_SRC
+*** Performance Tweaks
+By default, Emacs garbage collects after consing 800k bytes (not
+800KB). We'll bump it up to 100MB so we don't have to do that so
+much. Memory is cheap.
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold (* 100 1024 1024))
+#+END_SRC
+
+We can also set font-locking to occur in the background, which helps
+when fontifying large buffers. =jit-lock-defer-time= and
+=jit-lock-stealth-verbose= are =nil= by default, but it doesn't hurt
+to be explicit.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package jit-lock
+    :init
+    (setq jit-lock-defer-time nil
+  	jit-lock-stealth-nice 0.1
+  	jit-lock-stealth-time 0.2
+  	jit-lock-stealth-verbose nil))
+#+END_SRC
+
+This isn't strictly a performance setting, but computers have come a
+long way, and I don't need Emacs complaining about a biggish
+file. 25MB should be a fine limit.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package files
+    :init
+    (setq large-file-warning-threshold (* 25 1024 1024)))
+#+END_SRC
+*** Security
+The default for =gnutls-min-prime-bits= is 256, which might as well
+be 0. Let's set something a little more future-proof.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gnutls
+    :init
+    (setq gnutls-min-prime-bits 4096))
 #+END_SRC

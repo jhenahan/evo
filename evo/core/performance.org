@@ -1,0 +1,32 @@
+* Performance Tweaks
+  By default, Emacs garbage collects after consing 800k bytes (not
+  800KB). We'll bump it up to 100MB so we don't have to do that so
+  much. Memory is cheap.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq gc-cons-threshold (* 100 1024 1024))
+  #+END_SRC
+
+  We can also set font-locking to occur in the background, which helps
+  when fontifying large buffers. =jit-lock-defer-time= and
+  =jit-lock-stealth-verbose= are =nil= by default, but it doesn't hurt
+  to be explicit.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package jit-lock
+      :init
+      (setq jit-lock-defer-time nil
+	    jit-lock-stealth-nice 0.1
+	    jit-lock-stealth-time 0.2
+	    jit-lock-stealth-verbose nil))
+  #+END_SRC
+
+  This isn't strictly a performance setting, but computers have come a
+  long way, and I don't need Emacs complaining about a biggish
+  file. 25MB should be a fine limit.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package files
+      :init
+      (setq large-file-warning-threshold (* 25 1024 1024)))
+  #+END_SRC

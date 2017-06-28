@@ -1,2 +1,11 @@
+* Modern Libs
+  Some of the default Emacs Lisp APIs are a bit unintuitive, so we're
+  going to use the more modern options to hopefully keep our sanity.
+  #+INCLUDE: "~/.emacs.d/evo/core/libs.org"
 * System Settings
   #+INCLUDE: "~/.emacs.d/evo/core/backups.org"
+  #+INCLUDE: "~/.emacs.d/evo/core/ui-defaults.org" 
+  #+INCLUDE: "~/.emacs.d/evo/core/encodings.org"
+  #+INCLUDE: "~/.emacs.d/evo/core/performance.org"
+  #+INCLUDE: "~/.emacs.d/evo/core/security.org"
+

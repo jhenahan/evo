@@ -1,0 +1,9 @@
+* Security
+  The default for =gnutls-min-prime-bits= is 256, which might as well
+  be 0. Let's set something a little more future-proof.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package gnutls
+      :init
+      (setq gnutls-min-prime-bits 4096))
+  #+END_SRC

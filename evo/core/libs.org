@@ -1,0 +1,14 @@
+* Lists
+  #+BEGIN_SRC emacs-lisp
+    (use-package dash :quelpa)
+  #+END_SRC
+
+* Strings
+  #+BEGIN_SRC emacs-lisp
+    (use-package s :quelpa)
+  #+END_SRC
+
+* Files
+  #+BEGIN_SRC emacs-lisp
+    (use-package f :quelpa)
+  #+END_SRC

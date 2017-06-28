@@ -1,5 +1,10 @@
 (package-initialize)
 
+(defun reload-user-init-file()
+  (interactive)
+  (load-file user-init-file)
+  (load (concat user-emacs-directory "lisp/evo")))
+
 (let
     ((org-location
       (expand-file-name "modules/org-mode/lisp"

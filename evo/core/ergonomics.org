@@ -1,0 +1,14 @@
+* Ergonomic Changes
+  One character is better than two to three.
+
+  #+BEGIN_SRC emacs-lisp
+    (defalias 'yes-or-no-p 'y-or-n-p)
+  #+END_SRC
+  
+  Hide the mouse while typing.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq make-pointer-invisible t)
+  #+END_SRC
+
+  
