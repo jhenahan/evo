@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-28 19:33:59            |
+| *Date*   | 2017-06-28 19:38:50            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
