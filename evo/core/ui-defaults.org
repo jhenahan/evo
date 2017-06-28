@@ -2,7 +2,7 @@
 ** UI Cleanup
    We're trying to get away from non-keyboard inputs, entirely, so
    toolbars and scroll bars have to go.
-   
+
     #+BEGIN_SRC emacs-lisp
       (when (functionp 'menu-bar-mode)
 	(menu-bar-mode -1))
@@ -24,7 +24,7 @@
     #+BEGIN_SRC emacs-lisp
       (setq ring-bell-function (lambda ()))
     #+END_SRC
-  
+
 ** Font Locking
    I have never *not* wanted syntax highlighting when it's available,
    so let's get that going. I don't particularly know the consequences

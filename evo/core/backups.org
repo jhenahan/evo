@@ -16,7 +16,7 @@
 	     delete-old-versions t
 	     backup-by-copying t))
    #+END_SRC
-  
+
    Emacs evidently doesn't backup version-controlled files by default,
    so let's fix that. If you've never accidentally wiped all your work
    between commits, we must be in different universes.
@@ -33,9 +33,11 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package files
-       :init
-       (progn
-	 (setq backup-directory (f-join user-emacs-directory "backup"))
+       :after f
+       :commands f-join
+       :config
+       (let
+	   ((backup-directory (f-join user-emacs-directory "backup")))
 	 (setq backup-directory-alist
 	       `(("" . ,(f-join
 			 backup-directory "per-save"))))))
@@ -47,19 +49,22 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package files
+       :after f
+       :commands f-join
        :init
        (progn
 	 (defun force-backup-of-buffer ()
 	   (when (not buffer-backed-up)
-	     (let ((backup-directory-alist
-		    `(("" . ,(f-join
-			      backup-directory "per-session"))))
-		   (kept-new-versions 3))
+	     (let ((backup-directory (f-join user-emacs-directory "backup")))
+	       (let ((backup-directory-alist
+		      `(("" . ,(f-join
+				backup-directory "per-session"))))
+		     (kept-new-versions 3))
+		 (backup-buffer)))
+	     (let ((buffer-backed-up nil))
 	       (backup-buffer)))
-	   (let ((buffer-backed-up nil))
-	     (backup-buffer)))
 
-	 (add-hook 'before-save-hook 'force-backup-of-buffer)))
+	   (add-hook 'before-save-hook 'force-backup-of-buffer))))
    #+END_SRC
 
 ** Command History
@@ -68,17 +73,18 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package savehist
-       :after files
-       :init
+       :requires f
+       :config
        (progn
-	 (setq savehist-file (concat backup-directory "savehist")
-	       enable-recursive-minibuffers t
-	       history-length 1000
-	       savehist-additional-variables '(mark-ring
-					       global-mark-ring
-					       search-ring
-					       regexp-search-ring
-					       extended-command-history)
-	       savehist-autosave-interval 60)
+	 (let ((backup-directory (f-join user-emacs-directory "backup")))
+	   (setq savehist-file (f-join backup-directory "savehist")
+		 enable-recursive-minibuffers t
+		 history-length 1000
+		 savehist-additional-variables '(mark-ring
+						 global-mark-ring
+						 search-ring
+						 regexp-search-ring
+						 extended-command-history)
+		 savehist-autosave-interval 60))
 	 (savehist-mode t)))
    #+END_SRC

@@ -1,0 +1,17 @@
+* Undoing Weird Emacs Defaults
+** Sentences should end with a single space
+   Welcome to {{{time(%Y)}}}.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq sentence-end-double-space nil)
+   #+END_SRC
+
+** Whitespace must be purged
+   I can't think of scenario in which I wanted extraneous whitespace,
+   so let's just destroy it.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package whitespace
+       :init
+       (add-hook 'before-save-hook 'whitespace-cleanup))
+   #+END_SRC

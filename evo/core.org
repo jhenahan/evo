@@ -4,8 +4,9 @@
   #+INCLUDE: "~/.emacs.d/evo/core/libs.org"
 * System Settings
   #+INCLUDE: "~/.emacs.d/evo/core/backups.org"
-  #+INCLUDE: "~/.emacs.d/evo/core/ui-defaults.org" 
+  #+INCLUDE: "~/.emacs.d/evo/core/ui-defaults.org"
   #+INCLUDE: "~/.emacs.d/evo/core/encodings.org"
   #+INCLUDE: "~/.emacs.d/evo/core/performance.org"
   #+INCLUDE: "~/.emacs.d/evo/core/security.org"
-
+  #+INCLUDE: "~/.emacs.d/evo/core/ergonomics.org"
+  #+INCLUDE: "~/.emacs.d/evo/core/weirdness.org"

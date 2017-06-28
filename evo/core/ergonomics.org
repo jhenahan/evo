@@ -4,11 +4,20 @@
   #+BEGIN_SRC emacs-lisp
     (defalias 'yes-or-no-p 'y-or-n-p)
   #+END_SRC
-  
+
   Hide the mouse while typing.
 
   #+BEGIN_SRC emacs-lisp
     (setq make-pointer-invisible t)
   #+END_SRC
 
-  
+** Winner - window configuration history
+   =C-c <left>= and =C-c <right>= to move forward and backward in
+   window configuration history (e.g., if a function pops a buffer
+   with something useful, but then you need to get back to whatever
+   you were doing). We'll evilify this later.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package winner
+       :defer t)
+   #+END_SRC

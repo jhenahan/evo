@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-28 17:37:24            |
+| *Date*   | 2017-06-28 19:33:59            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
@@ -110,9 +110,11 @@ backups.
 
 #+BEGIN_SRC emacs-lisp
   (use-package files
-    :init
-    (progn
-      (setq backup-directory (f-join user-emacs-directory "backup"))
+    :after f
+    :commands f-join
+    :config
+    (let
+        ((backup-directory (f-join user-emacs-directory "backup")))
       (setq backup-directory-alist
   	  `(("" . ,(f-join
   		    backup-directory "per-save"))))))
@@ -124,19 +126,22 @@ backup by unsetting =buffer-backed-up=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package files
+    :after f
+    :commands f-join
     :init
     (progn
       (defun force-backup-of-buffer ()
         (when (not buffer-backed-up)
-  	(let ((backup-directory-alist
-  	       `(("" . ,(f-join
-  			 backup-directory "per-session"))))
-  	      (kept-new-versions 3))
+  	(let ((backup-directory (f-join user-emacs-directory "backup")))
+  	  (let ((backup-directory-alist
+  		 `(("" . ,(f-join
+  			   backup-directory "per-session"))))
+  		(kept-new-versions 3))
+  	    (backup-buffer)))
+  	(let ((buffer-backed-up nil))
   	  (backup-buffer)))
-        (let ((buffer-backed-up nil))
-  	(backup-buffer)))
   
-      (add-hook 'before-save-hook 'force-backup-of-buffer)))
+        (add-hook 'before-save-hook 'force-backup-of-buffer))))
 #+END_SRC
 
 **** Command History
@@ -145,18 +150,19 @@ utterly necessary for extended commands in Evil).
 
 #+BEGIN_SRC emacs-lisp
   (use-package savehist
-    :after files
-    :init
+    :requires f
+    :config
     (progn
-      (setq savehist-file (concat backup-directory "savehist")
-  	  enable-recursive-minibuffers t
-  	  history-length 1000
-  	  savehist-additional-variables '(mark-ring
-  					  global-mark-ring
-  					  search-ring
-  					  regexp-search-ring
-  					  extended-command-history)
-  	  savehist-autosave-interval 60)
+      (let ((backup-directory (f-join user-emacs-directory "backup")))
+        (setq savehist-file (f-join backup-directory "savehist")
+  	    enable-recursive-minibuffers t
+  	    history-length 1000
+  	    savehist-additional-variables '(mark-ring
+  					    global-mark-ring
+  					    search-ring
+  					    regexp-search-ring
+  					    extended-command-history)
+  	    savehist-autosave-interval 60))
       (savehist-mode t)))
 #+END_SRC
 *** Basic UI
@@ -255,4 +261,44 @@ be 0. Let's set something a little more future-proof.
   (use-package gnutls
     :init
     (setq gnutls-min-prime-bits 4096))
+#+END_SRC
+*** Ergonomic Changes
+One character is better than two to three.
+
+#+BEGIN_SRC emacs-lisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+Hide the mouse while typing.
+
+#+BEGIN_SRC emacs-lisp
+  (setq make-pointer-invisible t)
+#+END_SRC
+
+**** Winner - window configuration history
+=C-c <left>= and =C-c <right>= to move forward and backward in
+window configuration history (e.g., if a function pops a buffer
+with something useful, but then you need to get back to whatever
+you were doing). We'll evilify this later.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package winner
+    :defer t)
+#+END_SRC
+*** Undoing Weird Emacs Defaults
+**** Sentences should end with a single space
+Welcome to 2017.
+
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
+**** Whitespace must be purged
+I can't think of scenario in which I wanted extraneous whitespace,
+so let's just destroy it.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package whitespace
+    :init
+    (add-hook 'before-save-hook 'whitespace-cleanup))
 #+END_SRC
