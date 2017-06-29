@@ -1,0 +1,10 @@
+* Theme
+  =moe-theme= is an old-favorite.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package moe-theme
+      :defer t
+      :init
+      (use-package moe-theme-switcher)
+      :quelpa)
+  #+END_SRC

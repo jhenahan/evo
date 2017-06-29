@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-28 20:45:01            |
+| *Date*   | 2017-06-29 00:24:07            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
@@ -27,7 +27,7 @@ be a fairly straightforward =quelpa= and =use-package= affair.
 * Keep Custom Out of Version Control
 #+BEGIN_SRC emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file)  
+  (load custom-file)
 #+END_SRC
 
 * Package Management
@@ -39,7 +39,7 @@ be a fairly straightforward =quelpa= and =use-package= affair.
       (quelpa-self-upgrade)
     (with-temp-buffer
       (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-      (eval-buffer)))  
+      (eval-buffer)))
 #+END_SRC
 
 ** Install =quelpa-use-package=
@@ -48,7 +48,7 @@ be a fairly straightforward =quelpa= and =use-package= affair.
    '(quelpa-use-package
      :fetcher github
      :repo "quelpa/quelpa-use-package"))
-  (require 'quelpa-use-package)   
+  (require 'quelpa-use-package)
 #+END_SRC
 
 
@@ -58,8 +58,9 @@ that Emacs insists upon, and set up basic ergonomy. We'll get some
 convenient modernisms set up, as well.
 
 ** Modern Libs
-Some of the default Emacs Lisp APIs are a bit unintuitive, so we're
-going to use the more modern options to hopefully keep our sanity.
+Some of the default Emacs Lisp APIs are a bit unintuitive, so we're going to
+use the more modern options to hopefully keep our sanity. I also include =cl=
+for =lexical-let=, but I swear I'm trying to remove it.
 *** Lists
 #+BEGIN_SRC emacs-lisp
   (use-package dash :quelpa)
@@ -73,6 +74,10 @@ going to use the more modern options to hopefully keep our sanity.
 *** Files
 #+BEGIN_SRC emacs-lisp
   (use-package f :quelpa)
+#+END_SRC
+*** CL
+#+BEGIN_SRC emacs-lisp
+  (eval-when-compile (use-package cl))
 #+END_SRC
 ** System Settings
 *** History
@@ -330,4 +335,131 @@ reminder now and then.
     (progn
       (which-key-mode)
       (which-key-setup-side-window-right-bottom)))
+#+END_SRC
+
+* Look and Feel
+** Appearance
+*** Theme
+=moe-theme= is an old-favorite.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package moe-theme
+    :defer t
+    :init
+    (use-package moe-theme-switcher)
+    :quelpa)
+#+END_SRC
+*** Font
+~ TYPOGRAPHY ~
+
+We begin with a macro I stole from somewhere for creating font classes.
+#+BEGIN_SRC emacs-lisp
+  (defmacro evo|define-font-class (name &rest alternates)
+    (let ((alts (cl-gensym)) (sel (cl-gensym)))
+      `(lexical-let* ((,alts ',alternates)
+                      (,sel  (or (when (functionp 'x-family-fonts)
+                                   (cl-find-if 'x-family-fonts ,alts))
+                                 (car (last ,alts)))))
+                     (defun ,name (&optional size)
+                       (or (and size (format "%s-%d" ,sel size))
+                           ,sel)))))
+#+END_SRC
+
+Then we'll set up default font stacks for fixed- and variable-pitch fonts.
+
+#+BEGIN_SRC emacs-lisp
+  (evo|define-font-class fpfont "PragmataPro")
+  (evo|define-font-class vpfont
+                         "Akzidenz-Grotesk Pro"
+                         "Avenir"
+                         "Noto Sans"
+                         "Dejavu Sans"
+                         "Sans Serif")
+#+END_SRC
+
+Then we set up fonts according to our window system.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package frame
+    :commands fpfont
+    :init
+    (setq window-system-default-frame-alist
+          `((ns  . ((font . ,(fpfont 14))))
+            (mac . ((font . ,(fpfont 14))))
+            (w32 . ((font . ,(fpfont 14))))
+            (x   . ((font . ,(fpfont 14)))))))
+#+END_SRC
+
+And now force those fonts on frames always.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package faces
+    :commands (fpfont vpfont)
+    :init
+    (progn
+      (set-face-attribute 'fixed-pitch nil :family (fpfont))
+      (set-face-attribute 'variable-pitch nil :family (vpfont) :height 1.0)))
+#+END_SRC
+
+Fixed width is great for code, but there's a reasonable argument to be made
+that variable width is nicer for reading.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package text-mode
+    :config
+    (add-hook 'text-mode-hook 'variable-pitch-mode))
+  
+  (use-package info
+    :config
+    (add-hook 'Info-mode-hook 'variable-pitch-mode))
+#+END_SRC
+
+Org is a little more complex. I want fixed-width in code and tables, but not for normal text.
+
+#+BEGIN_SRC emacs-lisp
+  (defun evo/adjoin-to-list-or-symbol (element list-or-symbol)
+    (let ((list (if (not (listp list-or-symbol))
+                    (list list-or-symbol)
+                  list-or-symbol)))
+      (require 'cl-lib)
+      (cl-adjoin element list)))
+  
+  (use-package org
+    :commands -each
+    :config
+    (-each (list 'org-code 'org-block 'org-table)
+      (lambda (face)
+        (set-face-attribute
+         face nil
+         :inherit
+         (evo/adjoin-to-list-or-symbol
+          'fixed-pitch
+          (face-attribute face :inherit))))))
+#+END_SRC
+
+Frames are pretty picky, in my experience, so this just takes our parameters
+and reapplies them. Show? Emacs you mean business.
+
+#+BEGIN_SRC emacs-lisp
+  (defun evo/setup-frame (frame)
+    "Reapplies frame parameters from `default-frame-alist' and
+  `window-system-default-frame-alist'. This is useful while
+  tweaking and to setup the initial frame."
+    (let* ((type (framep-on-display frame))
+           (special (assq type window-system-default-frame-alist)))
+      (dolist (p default-frame-alist)
+        (set-frame-parameter frame (car p) (cdr p)))
+      (when special
+        (dolist (p (cdr special))
+          (set-frame-parameter frame (car p) (cdr p))))))
+  
+  (defun evo/setup-all-frames (&optional frame)
+    (dolist (frame (frame-list))
+      (evo/setup-frame frame)))
+  
+  (use-package frame
+    :config
+    (add-to-list 'after-make-frame-functions 'evo/setup-all-frames))
+  
+  (evo/setup-all-frames)
 #+END_SRC

@@ -1,0 +1,3 @@
+* Appearance
+  #+INCLUDE: "~/.emacs.d/evo/appearance/theme.org"
+  #+INCLUDE: "~/.emacs.d/evo/appearance/font.org"

@@ -29,7 +29,7 @@ the documentation with =M-x reload-user-init-file=.
 * Keep Custom Out of Version Control
   #+BEGIN_SRC emacs-lisp
     (setq custom-file "~/.emacs.d/custom.el")
-    (load custom-file)  
+    (load custom-file)
   #+END_SRC
 
 * Package Management
@@ -41,16 +41,16 @@ the documentation with =M-x reload-user-init-file=.
         (quelpa-self-upgrade)
       (with-temp-buffer
         (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-        (eval-buffer)))  
+        (eval-buffer)))
   #+END_SRC
-  
+
 ** Install =quelpa-use-package=
    #+BEGIN_SRC emacs-lisp
      (quelpa
       '(quelpa-use-package
         :fetcher github
         :repo "quelpa/quelpa-use-package"))
-     (require 'quelpa-use-package)   
+     (require 'quelpa-use-package)
    #+END_SRC
 
 
@@ -60,3 +60,6 @@ the documentation with =M-x reload-user-init-file=.
   convenient modernisms set up, as well.
 
   #+INCLUDE: "~/.emacs.d/evo/core.org"
+
+* Look and Feel
+  #+INCLUDE: "~/.emacs.d/evo/appearance.org"

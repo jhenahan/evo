@@ -12,3 +12,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package f :quelpa)
   #+END_SRC
+* CL
+  #+BEGIN_SRC emacs-lisp
+    (eval-when-compile (use-package cl))
+  #+END_SRC
