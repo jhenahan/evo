@@ -5,17 +5,17 @@
 
     #+BEGIN_SRC emacs-lisp
       (when (functionp 'menu-bar-mode)
-	(menu-bar-mode -1))
+        (menu-bar-mode -1))
       (when (functionp 'set-scroll-bar-mode)
-	(set-scroll-bar-mode 'nil))
+        (set-scroll-bar-mode 'nil))
       (when (functionp 'mouse-wheel-mode)
-	(mouse-wheel-mode -1))
+        (mouse-wheel-mode -1))
       (when (functionp 'tooltip-mode)
-	(tooltip-mode -1))
+        (tooltip-mode -1))
       (when (functionp 'tool-bar-mode)
-	(tool-bar-mode -1))
+        (tool-bar-mode -1))
       (when (functionp 'blink-cursor-mode)
-	(blink-cursor-mode -1))
+        (blink-cursor-mode -1))
       (setq inhibit-splash-screen t)
     #+END_SRC
 
@@ -33,9 +33,9 @@
 
     #+BEGIN_SRC emacs-lisp
       (use-package font-core
-	:init
-	(global-font-lock-mode t))
+        :init
+        (global-font-lock-mode t))
       (use-package font-lock
-	:init
-	(setq-default font-lock-multiline t))
+        :init
+        (setq-default font-lock-multiline t))
     #+END_SRC

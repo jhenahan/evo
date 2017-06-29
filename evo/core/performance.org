@@ -16,9 +16,9 @@
     (use-package jit-lock
       :init
       (setq jit-lock-defer-time nil
-	    jit-lock-stealth-nice 0.1
-	    jit-lock-stealth-time 0.2
-	    jit-lock-stealth-verbose nil))
+            jit-lock-stealth-nice 0.1
+            jit-lock-stealth-time 0.2
+            jit-lock-stealth-verbose nil))
   #+END_SRC
 
   This isn't strictly a performance setting, but computers have come a

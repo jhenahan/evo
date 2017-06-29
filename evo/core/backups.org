@@ -11,10 +11,10 @@
      (use-package files
        :init
        (setq version-control t
-	     kept-new-versions 10
-	     kept-old-versions 0
-	     delete-old-versions t
-	     backup-by-copying t))
+             kept-new-versions 10
+             kept-old-versions 0
+             delete-old-versions t
+             backup-by-copying t))
    #+END_SRC
 
    Emacs evidently doesn't backup version-controlled files by default,
@@ -37,10 +37,10 @@
        :commands f-join
        :config
        (let
-	   ((backup-directory (f-join user-emacs-directory "backup")))
-	 (setq backup-directory-alist
-	       `(("" . ,(f-join
-			 backup-directory "per-save"))))))
+           ((backup-directory (f-join user-emacs-directory "backup")))
+         (setq backup-directory-alist
+               `(("" . ,(f-join
+                         backup-directory "per-save"))))))
    #+END_SRC
 
    Then, we hook into the =before-save= to save a per-session backup
@@ -53,18 +53,18 @@
        :commands f-join
        :init
        (progn
-	 (defun force-backup-of-buffer ()
-	   (when (not buffer-backed-up)
-	     (let ((backup-directory (f-join user-emacs-directory "backup")))
-	       (let ((backup-directory-alist
-		      `(("" . ,(f-join
-				backup-directory "per-session"))))
-		     (kept-new-versions 3))
-		 (backup-buffer)))
-	     (let ((buffer-backed-up nil))
-	       (backup-buffer)))
+         (defun force-backup-of-buffer ()
+           (when (not buffer-backed-up)
+             (let ((backup-directory (f-join user-emacs-directory "backup")))
+               (let ((backup-directory-alist
+                      `(("" . ,(f-join
+                                backup-directory "per-session"))))
+                     (kept-new-versions 3))
+                 (backup-buffer)))
+             (let ((buffer-backed-up nil))
+               (backup-buffer)))
 
-	   (add-hook 'before-save-hook 'force-backup-of-buffer))))
+           (add-hook 'before-save-hook 'force-backup-of-buffer))))
    #+END_SRC
 
    Finally, we don't need Emacs to generate the an auto-save list,
@@ -83,15 +83,15 @@
        :requires f
        :config
        (progn
-	 (let ((backup-directory (f-join user-emacs-directory "backup")))
-	   (setq savehist-file (f-join backup-directory "savehist")
-		 enable-recursive-minibuffers t
-		 history-length 1000
-		 savehist-additional-variables '(mark-ring
-						 global-mark-ring
-						 search-ring
-						 regexp-search-ring
-						 extended-command-history)
-		 savehist-autosave-interval 60))
-	 (savehist-mode t)))
+         (let ((backup-directory (f-join user-emacs-directory "backup")))
+           (setq savehist-file (f-join backup-directory "savehist")
+                 enable-recursive-minibuffers t
+                 history-length 1000
+                 savehist-additional-variables '(mark-ring
+                                                 global-mark-ring
+                                                 search-ring
+                                                 regexp-search-ring
+                                                 extended-command-history)
+                 savehist-autosave-interval 60))
+         (savehist-mode t)))
    #+END_SRC

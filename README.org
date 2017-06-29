@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-28 20:04:45            |
+| *Date*   | 2017-06-28 20:45:01            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
@@ -88,10 +88,10 @@ tweak this if you find you need more.
   (use-package files
     :init
     (setq version-control t
-  	kept-new-versions 10
-  	kept-old-versions 0
-  	delete-old-versions t
-  	backup-by-copying t))
+          kept-new-versions 10
+          kept-old-versions 0
+          delete-old-versions t
+          backup-by-copying t))
 #+END_SRC
 
 Emacs evidently doesn't backup version-controlled files by default,
@@ -116,8 +116,8 @@ backups.
     (let
         ((backup-directory (f-join user-emacs-directory "backup")))
       (setq backup-directory-alist
-  	  `(("" . ,(f-join
-  		    backup-directory "per-save"))))))
+            `(("" . ,(f-join
+                      backup-directory "per-save"))))))
 #+END_SRC
 
 Then, we hook into the =before-save= to save a per-session backup
@@ -132,14 +132,14 @@ backup by unsetting =buffer-backed-up=.
     (progn
       (defun force-backup-of-buffer ()
         (when (not buffer-backed-up)
-  	(let ((backup-directory (f-join user-emacs-directory "backup")))
-  	  (let ((backup-directory-alist
-  		 `(("" . ,(f-join
-  			   backup-directory "per-session"))))
-  		(kept-new-versions 3))
-  	    (backup-buffer)))
-  	(let ((buffer-backed-up nil))
-  	  (backup-buffer)))
+          (let ((backup-directory (f-join user-emacs-directory "backup")))
+            (let ((backup-directory-alist
+                   `(("" . ,(f-join
+                             backup-directory "per-session"))))
+                  (kept-new-versions 3))
+              (backup-buffer)))
+          (let ((buffer-backed-up nil))
+            (backup-buffer)))
   
         (add-hook 'before-save-hook 'force-backup-of-buffer))))
 #+END_SRC
@@ -162,14 +162,14 @@ utterly necessary for extended commands in Evil).
     (progn
       (let ((backup-directory (f-join user-emacs-directory "backup")))
         (setq savehist-file (f-join backup-directory "savehist")
-  	    enable-recursive-minibuffers t
-  	    history-length 1000
-  	    savehist-additional-variables '(mark-ring
-  					    global-mark-ring
-  					    search-ring
-  					    regexp-search-ring
-  					    extended-command-history)
-  	    savehist-autosave-interval 60))
+              enable-recursive-minibuffers t
+              history-length 1000
+              savehist-additional-variables '(mark-ring
+                                              global-mark-ring
+                                              search-ring
+                                              regexp-search-ring
+                                              extended-command-history)
+              savehist-autosave-interval 60))
       (savehist-mode t)))
 #+END_SRC
 *** Basic UI
@@ -246,9 +246,9 @@ to be explicit.
   (use-package jit-lock
     :init
     (setq jit-lock-defer-time nil
-  	jit-lock-stealth-nice 0.1
-  	jit-lock-stealth-time 0.2
-  	jit-lock-stealth-verbose nil))
+          jit-lock-stealth-nice 0.1
+          jit-lock-stealth-time 0.2
+          jit-lock-stealth-verbose nil))
 #+END_SRC
 
 This isn't strictly a performance setting, but computers have come a
@@ -309,6 +309,14 @@ so let's just destroy it.
     :init
     (add-hook 'before-save-hook 'whitespace-cleanup))
 #+END_SRC
+**** Spaces, not tabs
+Also default tab-width and good old-fashioned 80 columns. Fite me
+irl.
+#+BEGIN_SRC emacs-lisp
+  (setq-default fill-column 80)
+  (setq-default tab-width 2)
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
 ** Functionality
 *** Discoverability
 =which-key= is really cool. Muscle memory is no substitute for a
@@ -316,6 +324,7 @@ reminder now and then.
 
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
+    :diminish
     :quelpa
     :init
     (progn

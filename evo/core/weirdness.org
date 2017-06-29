@@ -15,3 +15,11 @@
        :init
        (add-hook 'before-save-hook 'whitespace-cleanup))
    #+END_SRC
+** Spaces, not tabs
+   Also default tab-width and good old-fashioned 80 columns. Fite me
+   irl.
+   #+BEGIN_SRC emacs-lisp
+     (setq-default fill-column 80)
+     (setq-default tab-width 2)
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
