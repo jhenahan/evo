@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-29 00:24:07            |
+| *Date*   | 2017-06-29 01:14:19            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
@@ -93,10 +93,10 @@ tweak this if you find you need more.
   (use-package files
     :init
     (setq version-control t
-          kept-new-versions 10
-          kept-old-versions 0
-          delete-old-versions t
-          backup-by-copying t))
+  	kept-new-versions 10
+  	kept-old-versions 0
+  	delete-old-versions t
+  	backup-by-copying t))
 #+END_SRC
 
 Emacs evidently doesn't backup version-controlled files by default,
@@ -121,8 +121,8 @@ backups.
     (let
         ((backup-directory (f-join user-emacs-directory "backup")))
       (setq backup-directory-alist
-            `(("" . ,(f-join
-                      backup-directory "per-save"))))))
+  	  `(("" . ,(f-join
+  		    backup-directory "per-save"))))))
 #+END_SRC
 
 Then, we hook into the =before-save= to save a per-session backup
@@ -137,14 +137,14 @@ backup by unsetting =buffer-backed-up=.
     (progn
       (defun force-backup-of-buffer ()
         (when (not buffer-backed-up)
-          (let ((backup-directory (f-join user-emacs-directory "backup")))
-            (let ((backup-directory-alist
-                   `(("" . ,(f-join
-                             backup-directory "per-session"))))
-                  (kept-new-versions 3))
-              (backup-buffer)))
-          (let ((buffer-backed-up nil))
-            (backup-buffer)))
+  	(let ((backup-directory (f-join user-emacs-directory "backup")))
+  	  (let ((backup-directory-alist
+  		 `(("" . ,(f-join
+  			   backup-directory "per-session"))))
+  		(kept-new-versions 3))
+  	    (backup-buffer)))
+  	(let ((buffer-backed-up nil))
+  	  (backup-buffer)))
   
         (add-hook 'before-save-hook 'force-backup-of-buffer))))
 #+END_SRC
@@ -167,14 +167,14 @@ utterly necessary for extended commands in Evil).
     (progn
       (let ((backup-directory (f-join user-emacs-directory "backup")))
         (setq savehist-file (f-join backup-directory "savehist")
-              enable-recursive-minibuffers t
-              history-length 1000
-              savehist-additional-variables '(mark-ring
-                                              global-mark-ring
-                                              search-ring
-                                              regexp-search-ring
-                                              extended-command-history)
-              savehist-autosave-interval 60))
+  	    enable-recursive-minibuffers t
+  	    history-length 1000
+  	    savehist-additional-variables '(mark-ring
+  					    global-mark-ring
+  					    search-ring
+  					    regexp-search-ring
+  					    extended-command-history)
+  	    savehist-autosave-interval 60))
       (savehist-mode t)))
 #+END_SRC
 *** Basic UI
@@ -251,9 +251,9 @@ to be explicit.
   (use-package jit-lock
     :init
     (setq jit-lock-defer-time nil
-          jit-lock-stealth-nice 0.1
-          jit-lock-stealth-time 0.2
-          jit-lock-stealth-verbose nil))
+  	jit-lock-stealth-nice 0.1
+  	jit-lock-stealth-time 0.2
+  	jit-lock-stealth-verbose nil))
 #+END_SRC
 
 This isn't strictly a performance setting, but computers have come a
@@ -357,12 +357,12 @@ We begin with a macro I stole from somewhere for creating font classes.
   (defmacro evo|define-font-class (name &rest alternates)
     (let ((alts (cl-gensym)) (sel (cl-gensym)))
       `(lexical-let* ((,alts ',alternates)
-                      (,sel  (or (when (functionp 'x-family-fonts)
-                                   (cl-find-if 'x-family-fonts ,alts))
-                                 (car (last ,alts)))))
-                     (defun ,name (&optional size)
-                       (or (and size (format "%s-%d" ,sel size))
-                           ,sel)))))
+  		    (,sel  (or (when (functionp 'x-family-fonts)
+  				 (cl-find-if 'x-family-fonts ,alts))
+  			       (car (last ,alts)))))
+  		   (defun ,name (&optional size)
+  		     (or (and size (format "%s-%d" ,sel size))
+  			 ,sel)))))
 #+END_SRC
 
 Then we'll set up default font stacks for fixed- and variable-pitch fonts.
@@ -370,11 +370,11 @@ Then we'll set up default font stacks for fixed- and variable-pitch fonts.
 #+BEGIN_SRC emacs-lisp
   (evo|define-font-class fpfont "PragmataPro")
   (evo|define-font-class vpfont
-                         "Akzidenz-Grotesk Pro"
-                         "Avenir"
-                         "Noto Sans"
-                         "Dejavu Sans"
-                         "Sans Serif")
+  		       "Akzidenz-Grotesk Pro"
+  		       "Avenir"
+  		       "Noto Sans"
+  		       "Dejavu Sans"
+  		       "Sans Serif")
 #+END_SRC
 
 Then we set up fonts according to our window system.
@@ -384,10 +384,10 @@ Then we set up fonts according to our window system.
     :commands fpfont
     :init
     (setq window-system-default-frame-alist
-          `((ns  . ((font . ,(fpfont 14))))
-            (mac . ((font . ,(fpfont 14))))
-            (w32 . ((font . ,(fpfont 14))))
-            (x   . ((font . ,(fpfont 14)))))))
+  	`((ns  . ((font . ,(fpfont 14))))
+  	  (mac . ((font . ,(fpfont 14))))
+  	  (w32 . ((font . ,(fpfont 14))))
+  	  (x   . ((font . ,(fpfont 14)))))))
 #+END_SRC
 
 And now force those fonts on frames always.
@@ -419,8 +419,8 @@ Org is a little more complex. I want fixed-width in code and tables, but not for
 #+BEGIN_SRC emacs-lisp
   (defun evo/adjoin-to-list-or-symbol (element list-or-symbol)
     (let ((list (if (not (listp list-or-symbol))
-                    (list list-or-symbol)
-                  list-or-symbol)))
+  		  (list list-or-symbol)
+  		list-or-symbol)))
       (require 'cl-lib)
       (cl-adjoin element list)))
   
@@ -433,12 +433,12 @@ Org is a little more complex. I want fixed-width in code and tables, but not for
          face nil
          :inherit
          (evo/adjoin-to-list-or-symbol
-          'fixed-pitch
-          (face-attribute face :inherit))))))
+  	'fixed-pitch
+  	(face-attribute face :inherit))))))
 #+END_SRC
 
 Frames are pretty picky, in my experience, so this just takes our parameters
-and reapplies them. Show? Emacs you mean business.
+and reapplies them. Show Emacs you mean business.
 
 #+BEGIN_SRC emacs-lisp
   (defun evo/setup-frame (frame)
@@ -446,12 +446,12 @@ and reapplies them. Show? Emacs you mean business.
   `window-system-default-frame-alist'. This is useful while
   tweaking and to setup the initial frame."
     (let* ((type (framep-on-display frame))
-           (special (assq type window-system-default-frame-alist)))
+  	 (special (assq type window-system-default-frame-alist)))
       (dolist (p default-frame-alist)
         (set-frame-parameter frame (car p) (cdr p)))
       (when special
         (dolist (p (cdr special))
-          (set-frame-parameter frame (car p) (cdr p))))))
+  	(set-frame-parameter frame (car p) (cdr p))))))
   
   (defun evo/setup-all-frames (&optional frame)
     (dolist (frame (frame-list))

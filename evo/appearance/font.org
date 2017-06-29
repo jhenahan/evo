@@ -87,7 +87,7 @@
   #+END_SRC
 
   Frames are pretty picky, in my experience, so this just takes our parameters
-  and reapplies them. Show? Emacs you mean business.
+  and reapplies them. Show Emacs you mean business.
 
   #+BEGIN_SRC emacs-lisp
     (defun evo/setup-frame (frame)
