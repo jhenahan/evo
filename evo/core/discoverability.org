@@ -1,0 +1,12 @@
+* Discoverability
+  =which-key= is really cool. Muscle memory is no substitute for a
+  reminder now and then.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+      :quelpa
+      :init
+      (progn
+	(which-key-mode)
+	(which-key-setup-side-window-right-bottom)))
+  #+END_SRC

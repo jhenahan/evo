@@ -2,7 +2,7 @@
 #+AUTHOR: Jack Henahan
 | *Author* | Jack Henahan <jhenahan@me.com> |
 |----------+--------------------------------|
-| *Date*   | 2017-06-28 19:38:50            |
+| *Date*   | 2017-06-28 20:04:45            |
 
 This file is updated every time the init file is reloaded, so the
 entire configuration (aside from the bootstrapping code) should
@@ -142,6 +142,13 @@ backup by unsetting =buffer-backed-up=.
   	  (backup-buffer)))
   
         (add-hook 'before-save-hook 'force-backup-of-buffer))))
+#+END_SRC
+
+Finally, we don't need Emacs to generate the an auto-save list,
+because I can't fathom a reason that I would want that.
+
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-list-file-prefix nil)
 #+END_SRC
 
 **** Command History
@@ -301,4 +308,17 @@ so let's just destroy it.
   (use-package whitespace
     :init
     (add-hook 'before-save-hook 'whitespace-cleanup))
+#+END_SRC
+** Functionality
+*** Discoverability
+=which-key= is really cool. Muscle memory is no substitute for a
+reminder now and then.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :quelpa
+    :init
+    (progn
+      (which-key-mode)
+      (which-key-setup-side-window-right-bottom)))
 #+END_SRC

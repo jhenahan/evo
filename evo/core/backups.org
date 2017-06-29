@@ -67,6 +67,13 @@
 	   (add-hook 'before-save-hook 'force-backup-of-buffer))))
    #+END_SRC
 
+   Finally, we don't need Emacs to generate the an auto-save list,
+   because I can't fathom a reason that I would want that.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq auto-save-list-file-prefix nil)
+   #+END_SRC
+
 ** Command History
    It's nice to be able to refer back to previous commands (and it's
    utterly necessary for extended commands in Evil).

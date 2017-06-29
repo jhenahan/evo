@@ -10,3 +10,5 @@
   #+INCLUDE: "~/.emacs.d/evo/core/security.org"
   #+INCLUDE: "~/.emacs.d/evo/core/ergonomics.org"
   #+INCLUDE: "~/.emacs.d/evo/core/weirdness.org"
+* Functionality
+  #+INCLUDE: "~/.emacs.d/evo/core/discoverability.org"
