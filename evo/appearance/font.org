@@ -54,13 +54,9 @@
   that variable width is nicer for reading.
 
   #+BEGIN_SRC emacs-lisp
-    (use-package text-mode
-      :config
-      (add-hook 'text-mode-hook 'variable-pitch-mode))
+    (add-hook 'text-mode-hook 'variable-pitch-mode)
 
-    (use-package info
-      :config
-      (add-hook 'Info-mode-hook 'variable-pitch-mode))
+    (add-hook 'Info-mode-hook 'variable-pitch-mode)
   #+END_SRC
 
   Org is a little more complex. I want fixed-width in code and tables, but not for normal text.

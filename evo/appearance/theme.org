@@ -6,5 +6,5 @@
       :defer t
       :init
       (use-package moe-theme-switcher)
-      :quelpa)
+      :quelpa (:upgrade t))
   #+END_SRC
