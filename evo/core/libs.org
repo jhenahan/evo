@@ -1,16 +1,16 @@
 * Lists
   #+BEGIN_SRC emacs-lisp
-    (use-package dash :quelpa)
+    (use-package dash :quelpa (:upgrade t))
   #+END_SRC
 
 * Strings
   #+BEGIN_SRC emacs-lisp
-    (use-package s :quelpa)
+    (use-package s :quelpa (:upgrade t))
   #+END_SRC
 
 * Files
   #+BEGIN_SRC emacs-lisp
-    (use-package f :quelpa)
+    (use-package f :quelpa (:upgrade t))
   #+END_SRC
 * CL
   #+BEGIN_SRC emacs-lisp

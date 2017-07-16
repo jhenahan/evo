@@ -4,10 +4,10 @@
 
   #+BEGIN_SRC emacs-lisp
     (use-package which-key
-      :diminish
-      :quelpa
-      :init
+      :diminish ""
+      :config
       (progn
         (which-key-mode)
-        (which-key-setup-side-window-right-bottom)))
+        (which-key-setup-side-window-right-bottom))
+      :quelpa (:upgrade t))
   #+END_SRC
