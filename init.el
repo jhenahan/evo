@@ -73,3 +73,8 @@
 
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 (require 'evo)
+
+(require 'server)
+
+(unless (server-running-p)
+  (server-start))
