@@ -1,4 +1,4 @@
-#+TITLE: Emacs + eVil + Org (EVO)
+#+TITLE: Emacs + eVilish (modalka) + Org (EVO)
 #+AUTHOR: Jack Henahan
 #+EMAIL: jhenahan@me.com
 
@@ -53,13 +53,77 @@ the documentation with =M-x reload-user-init-file=.
      (require 'quelpa-use-package)
    #+END_SRC
 
+** Load =use-package
+   #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (use-package use-package
+         :quelpa
+         (use-package
+           :fetcher github
+           :repo "jwiegley/use-package")))
+
+     (use-package diminish
+       :quelpa
+       (diminish
+        :fetcher github
+        :repo "myrjola/diminish.el"))
+     (require 'bind-key)
+   #+END_SRC
 
 * Core Configuration
+** Who are you?
+  #+BEGIN_SRC emacs-lisp
+    (setq user-full-name "Jack Henahan")
+  #+END_SRC
+** Improvements
   First, I need to undo a series of exceptionally terrible defaults
   that Emacs insists upon, and set up basic ergonomy. We'll get some
   convenient modernisms set up, as well.
 
   #+INCLUDE: "~/.emacs.d/evo/core.org"
+* Helpers
+  #+INCLUDE: "~/.emacs.d/evo/helpers/macros.org"
+  #+INCLUDE: "~/.emacs.d/evo/helpers/functions.org"
+* Modal Editing
+  I have been an Evil user for several years. From a health perspective, modal
+  interactions are certainly better than CUA and Emacs-style chording,
+  especially during longer refactoring sessions where the primary interaction is
+  editing text rather than typing.
 
+  That said, I'm moderately convinced that the changes that Evil makes to the
+  interaction model of Emacs may be a bit of an overreach, and may not reflect
+  what I actually want out of modal editing. My reliance on Evil may very well
+  just be an artifact of my long use of Vim. To that end, modal features will be
+  implemented here with Mark Karpov's [[https://github.com/mrkkrp/modalka][=modalka=]]. This provides no features out
+  of the box, but allows the user to customize their modal experience as they
+  see fit.
+
+  This sounds like a hassle, to be honest, but a great deal of the Evil setup
+  process is either finding and learning a set of Evil bindings provided by a
+  compatibility package or setting up one's own bindings, anyway, so this isn't
+  really that different in the long run.
+
+  For the sake of completeness, these bindings will be defined according to the
+  content in the extremely educational [[https://www.masteringemacs.org][Mastering Emacs]] by Mickey Petersen.
+
+
+* Useful Features
+** Narrow to region
+   [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Narrowing.html][Narrow to region]] is a really neat feature. It allows us to define an active
+   region and have all commands within that region only affect that space. This
+   is especially good for text replacement, refactoring, and other tasks where
+   we don't necessarily want to alter the entire file. It's a bit unintuitive at
+   first, so it's disabled by default. This will enable the functionality.
+   #+BEGIN_SRC emacs-lisp
+     (put 'narrow-to-region 'disabled nil)
+   #+END_SRC
+** PDF viewing
+   [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Document-View.html][DocView]] is one of the nicer PDF viewers, especially if you tend to live in
+   Emacs a lot. Split view is especially useful for complex documents.
+   #+BEGIN_SRC emacs-lisp
+     (setq doc-view-continuous t)
+   #+END_SRC
 * Look and Feel
   #+INCLUDE: "~/.emacs.d/evo/appearance.org"
+* Work
+  #+INCLUDE: "~/.emacs.d/evo/programming.org"
