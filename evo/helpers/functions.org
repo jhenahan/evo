@@ -1,0 +1,6 @@
+* Useful Functions
+** Globally bind a key to a function
+  #+BEGIN_SRC emacs-lisp
+    (defun π (key f)
+      (global-set-key (kbd key) f))
+  #+END_SRC

@@ -1,0 +1,8 @@
+* Useful Macros
+** Interactively invoke a function with arguments
+   #+BEGIN_SRC emacs-lisp
+     (defmacro ε (f &rest args)
+       `(lambda (&rest rest)
+          (interactive)
+          (apply ,f ,@args rest)))
+   #+END_SRC
