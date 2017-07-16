@@ -1,0 +1,24 @@
+* Programming
+  #+INCLUDE: "~/.emacs.d/evo/programming/languages.org"
+* Debugging
+  We set [[https://www.gnu.org/software/gdb/][=gdb=]] up as a mutlti-windowed debugger.
+  #+BEGIN_SRC emacs-lisp
+    (setq gdb-many-windows t
+          gdb-show-main t)
+  #+END_SRC
+* Diffing
+  [[https://www.gnu.org/software/emacs/manual/html_node/ediff/][=ediff=]] is my diff and merge tool of choice, and I prefer the diff to be
+  displayed in a single window, rather than in multiple frames.
+  #+BEGIN_SRC emacs-lisp
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  #+END_SRC
+
+* Tramp
+  I just started getting the hang of [[https://www.emacswiki.org/emacs/TrampMode][Tramp]] for remote editing, and I've found
+  the experience quite gratifying. I do everything over SSH, so we'll inform
+  Tramp that we really want that by default.
+  #+BEGIN_SRC emacs-lisp
+    (setq tramp-default-method "ssh"
+          tramp-backup-directory-alist backup-directory-alist
+          tramp-ssh-controlmaster-options "ssh")
+  #+END_SRC

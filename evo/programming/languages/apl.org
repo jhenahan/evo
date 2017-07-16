@@ -1,0 +1,10 @@
+* APL
+  #+BEGIN_SRC emacs-lisp
+    (eval-when-compile
+      (use-package gnu-apl-mode
+        :quelpa
+        ((gnu-apl-mode
+         :fetcher github
+         :repo "lokedhs/gnu-apl-mode")
+         :upgrade t)))
+  #+END_SRC
